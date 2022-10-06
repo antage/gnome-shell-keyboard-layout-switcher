@@ -1,6 +1,6 @@
 {
   "name": "Keyboard Layout Switcher",
-  "description": "Switch to first keyboard layout pressing CapsLock, switch to second keyboard layout pressing Shift+CapsLock.",
+  "description": "Switch to first keyboard layout pressing Hyper_L, switch to second keyboard layout pressing <Shift>Hyper_L.",
   "uuid": "keyboard-layout-switcher@gnome-shell.antage.name",
   "shell-version": [
     "42"
