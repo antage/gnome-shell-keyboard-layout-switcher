@@ -1,0 +1,8 @@
+{
+  "name": "Keyboard Layout Switcher",
+  "description": "Switch to first keyboard layout pressing CapsLock, switch to second keyboard layout pressing Shift+CapsLock.",
+  "uuid": "keyboard-layout-switcher@gnome-shell.antage.name",
+  "shell-version": [
+    "42"
+  ]
+}
