@@ -20,18 +20,17 @@
 
 const DEBUG = false;
 
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const Main = imports.ui.main;
-const Keyboard = imports.ui.status.keyboard;
+import Meta from 'gi://Meta';
+import Shell from 'gi://Shell';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as Keyboard from 'resource:///org/gnome/shell/ui/status/keyboard.js';
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-
-class Extension {
-    constructor() {
+export default class KeyboardLayoutSwitcher extends Extension {
+    constructor(metadata) {
 		if (DEBUG)
-			log('constructor()');
+			console.log('constructor()');
+		super(metadata);
 		this._key_handler_id = null;
 		this._layout1_action = null;
 		this._layout1_name = null;
@@ -41,7 +40,7 @@ class Extension {
 
     enable() {
 		if (DEBUG)
-			log('enable()');
+			console.log('enable()');
 		try {
 			this._key_handler_id =
 				global.display.connect(
@@ -52,70 +51,70 @@ class Extension {
 			this._layout1_action = global.display.grab_accelerator('Hyper_L', 0);
 			if (this.layout1_action == Meta.KeyBindingAction.NONE) {
 				if (DEBUG)
-					log('Unable to grab Hyper_L accelerator');
+					console.log('Unable to grab Hyper_L accelerator');
 			} else {
 				let action = this._layout1_action;
 				if (DEBUG)
-					log('Grabbed Hyper_L accelerator [action={}]', action);
+					console.log('Grabbed Hyper_L accelerator [action={}]', action);
 				this._layout1_name = Meta.external_binding_name_for_action(action);
 				let name = this._layout1_name;
 				if (DEBUG)
-					log('Received binding name for action [name={}, action={}]', name, action);
+					console.log('Received binding name for action [name={}, action={}]', name, action);
 
 				if (DEBUG)
-					log('Requesting WM to allow binding [name={}]', name);
+					console.log('Requesting WM to allow binding [name={}]', name);
 				Main.wm.allowKeybinding(name, Shell.ActionMode.ALL);
 			}
 			this._layout2_action = global.display.grab_accelerator('<Shift>Hyper_L', 0);
 			if (this.layout2_action == Meta.KeyBindingAction.NONE) {
 				if (DEBUG)
-					log('Unable to grab <Shift>Hyper_L accelerator');
+					console.log('Unable to grab <Shift>Hyper_L accelerator');
 			} else {
 				let action = this._layout2_action;
 				if (DEBUG)
-					log('Grabbed <Shift>Hyper_L accelerator [action={}]', action);
+					console.log('Grabbed <Shift>Hyper_L accelerator [action={}]', action);
 				this._layout2_name = Meta.external_binding_name_for_action(action);
 				let name = this._layout2_name;
 				if (DEBUG)
-					log('Received binding name for action [name={}, action={}]', name, action);
+					console.log('Received binding name for action [name={}, action={}]', name, action);
 
 				if (DEBUG)
-					log('Requesting WM to allow binding [name={}]', name);
+					console.log('Requesting WM to allow binding [name={}]', name);
 				Main.wm.allowKeybinding(name, Shell.ActionMode.ALL);
 			}
 		} catch (e) {
-			logError(e, 'enable() error: ');
+			console.error(e, 'enable() error: ');
 		}
     }
 
     disable() {
 		if (DEBUG)
-			log('disable()');
+			console.log('disable()');
 		try {
 			if (this._layout1_action) {
 				if (global.display.ungrab_accelerator(this._layout1_action)) {
 					if (DEBUG)
-						log('Ungrab Hyper_L accelerator');
+						console.log('Ungrab Hyper_L accelerator');
 					this._layout1_action = null;
 				}
 			}
 			if (this._layout1_name) {
 				Main.wm.allowKeybinding(this._layout1_name, Shell.ActionMode.NONE);
 				if (DEBUG)
-					log('Release Hyper_L keybinding.');
+					console.log('Release Hyper_L keybinding.');
 				this._layout1_name = null;
 			}
 			if (this._layout2_action) {
 				if (global.display.ungrab_accelerator(this._layout2_action)) {
 					if (DEBUG)
-						log('Ungrab <Shift>Hyper_L accelerator');
+						console.log('Ungrab <Shift>Hyper_L accelerator');
 					this._layout2_action = null;
 				}
 			}
 			if (this._layout2_name) {
 				Main.wm.allowKeybinding(this._layout2_name, Shell.ActionMode.NONE);
 				if (DEBUG)
-					log('Release <Shift>Hyper_L keybinding.');
+					console.log('Release <Shift>Hyper_L keybinding.');
 				this._layout2_name = null;
 			}
 			if (this._key_handler_id) {
@@ -123,34 +122,31 @@ class Extension {
 				this._key_handler_id = null;
 			}
 		} catch (e) {
-			logError(e, 'disable() error: ');
+			console.error(e, 'disable() error: ');
 		}
     }
 
 	_handler(_, action) {
 		if (DEBUG)
-			log('handler [action={}]', action);
+			console.log('handler [action={}]', action);
 		if (action == this._layout1_action) {
 			if (DEBUG)
-				log('switch to layout #1');
+				console.log('switch to layout #1');
 			try {
 				Keyboard.getInputSourceManager().inputSources[0].activate();
 			} catch (e) {
-				logError(e, '_handler() error: ');
+				console.error(e, '_handler() error: ');
 			}
 		}
 		if (action == this._layout2_action) {
 			if (DEBUG)
-				log('switch to layout #2');
+				console.log('switch to layout #2');
 			try {
 				Keyboard.getInputSourceManager().inputSources[1].activate();
 			} catch (e) {
-				logError(e, '_handler() error: ');
+				console.error(e, '_handler() error: ');
 			}
 		}
 	}
 }
 
-function init() {
-    return new Extension();
-}

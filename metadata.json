@@ -3,7 +3,6 @@
   "description": "Switch to first keyboard layout pressing Hyper_L, switch to second keyboard layout pressing <Shift>Hyper_L.",
   "uuid": "keyboard-layout-switcher@gnome-shell.antage.name",
   "shell-version": [
-    "42",
-    "43"
+    "45"
   ]
 }
